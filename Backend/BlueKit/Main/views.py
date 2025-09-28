@@ -11,7 +11,6 @@ from django.shortcuts import get_object_or_404
 import re
 import os
 
-
 # Create your views here.
 
 @api_view(["POST"])
@@ -33,19 +32,47 @@ def comment_remover(request):
 
         # Comment patterns for different languages
         COMMENT_PATTERNS = {
-            ".py":   [r"#.*"],                          # Python
-            ".r":    [r"#.*"],                          # R
-            ".c":    [r"//.*", r"/\*.*?\*/"],           # C
-            ".cpp":  [r"//.*", r"/\*.*?\*/"],           # C++
-            ".java": [r"//.*", r"/\*.*?\*/"],           # Java
-            ".js":   [r"//.*", r"/\*.*?\*/"],           # JavaScript
-            ".ts":   [r"//.*", r"/\*.*?\*/"],           # TypeScript
-            ".php":  [r"//.*", r"/\*.*?\*/", r"#.*"],   # PHP
-            ".rs":   [r"//.*", r"/\*.*?\*/"],           # Rust
-            ".html": [r"<!--.*?-->"],                   # HTML
-            ".css":  [r"/\*.*?\*/"],                    # CSS
-        }
+                # ".py":   [r"#[^\n]*", r'"""[\s\S]*?"""', r"'''[\s\S]*?'''"], 
+                # ".r":    [r"#[^\n]*"],
 
+                # ".c":    [r"//[^\n]*", r"/\*[\s\S]*?\*/"],
+                # ".cpp":  [r"//[^\n]*", r"/\*[\s\S]*?\*/"],
+                # ".java": [r"//[^\n]*", r"/\*[\s\S]*?\*/"],
+                # ".js":   [r"//[^\n]*", r"/\*[\s\S]*?\*/"],
+                # ".ts":   [r"//[^\n]*", r"/\*[\s\S]*?\*/"],
+                # ".php":  [r"//[^\n]*", r"/\*[\s\S]*?\*/", r"#[^\n]*"],
+                # ".rs":   [r"//[^\n]*", r"/\*[\s\S]*?\*/"],
+
+                # ".html": [r"<!--[\s\S]*?-->"],
+                # ".css":  [r"/\*[\s\S]*?\*/"],
+
+                ".py":   [r"#[^\n]*", r'"""[\s\S]*?"""', r"'''[\s\S]*?'''"],
+
+                ".r":    [r"#[^\n]*"],
+
+                ".c":    [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/"],
+                ".cpp":  [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/"],
+                ".java": [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/"],
+                ".js":   [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/"],
+                ".ts":   [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/"],
+                ".php":  [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/", r"#[^\n]*"],
+                ".rs":   [r"(?<!:)//[^\n]*", r"/\*[\s\S]*?\*/"],
+
+                ".html": [r"<!--[\s\S]*?-->"],
+                ".css":  [r"/\*[\s\S]*?\*/"],
+
+            # ".py":   [r"#.*"],                           Python
+            # ".r":    [r"#.*"],                           R
+            # ".c":    [r"//.*", r"/\*.*?\*/"],            C
+            # ".cpp":  [r"//.*", r"/\*.*?\*/"],            C++
+            # ".java": [r"//.*", r"/\*.*?\*/"],            Java
+            # ".js":   [r"//.*", r"/\*.*?\*/"],            JavaScript
+            # ".ts":   [r"//.*", r"/\*.*?\*/"],            TypeScript
+            # ".php":  [r"//.*", r"/\*.*?\*/", r"#.*"],    PHP
+            # ".rs":   [r"//.*", r"/\*.*?\*/"],            Rust
+            # ".html": [r"<!--.*?-->"],                    HTML
+            # ".css":  [r"/\*.*?\*/"],                     CSS
+        }
         patterns = COMMENT_PATTERNS.get(ext.lower())
         if not patterns:
             return Response({"error": f"Unsupported file type: {ext}"}, status=status.HTTP_400_BAD_REQUEST)
